@@ -17,10 +17,10 @@ from pathlib import Path
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser('', add_help=False)
-    parser.add_argument('--ae', type=str, required=True) # 'kl_d512_m512_l16'
-    parser.add_argument('--ae-pth', type=str, required=True) # 'output/ae/kl_d512_m512_l16/checkpoint-199.pth'
-    parser.add_argument('--dm', type=str, required=True) # 'kl_d512_m512_l16_edm'
-    parser.add_argument('--dm-pth', type=str, required=True) # 'output/uncond_dm/kl_d512_m512_l16_edm/checkpoint-999.pth'
+    parser.add_argument('--ae', default='kl_d512_m512_l8', type=str, required=False) # 'kl_d512_m512_l16'
+    parser.add_argument('--ae-pth', default='output/ae/kl_d512_m512_l8/checkpoint-199.pth', type=str, required=False) # 'output/ae/kl_d512_m512_l16/checkpoint-199.pth'
+    parser.add_argument('--dm', default='kl_d512_m512_l8_d24_edm', type=str, required=False) # 'kl_d512_m512_l16_edm'
+    parser.add_argument('--dm-pth', default='output/class_cond_dm/kl_d512_m512_l8_d24_edm/checkpoint-499.pth', type=str, required=False) # 'output/uncond_dm/kl_d512_m512_l16_edm/checkpoint-999.pth'
     args = parser.parse_args()
     print(args)
 
@@ -30,13 +30,13 @@ if __name__ == "__main__":
 
     ae = models_ae.__dict__[args.ae]()
     ae.eval()
-    ae.load_state_dict(torch.load(args.ae_pth)['model'])
+    ae.load_state_dict(torch.load(args.ae_pth, weights_only=False)['model'])
     ae.to(device)
 
     model = models_class_cond.__dict__[args.dm]()
     model.eval()
 
-    model.load_state_dict(torch.load(args.dm_pth)['model'])
+    model.load_state_dict(torch.load(args.dm_pth, weights_only=False)['model'])
     model.to(device)
 
     density = 128
@@ -71,5 +71,24 @@ if __name__ == "__main__":
                     verts *= gap
                     verts -= 1
 
+
                     m = trimesh.Trimesh(verts, faces)
                     m.export('class_cond_obj/{}/{:02d}-{:05d}.obj'.format(args.dm, category_id, i*iters+j))
+
+                    out_base = f"class_cond_obj/{args.dm}/{category_id:02d}-{i*iters+j:05d}"
+
+                    # export mesh
+                    m = trimesh.Trimesh(verts, faces)
+                    m.export(out_base + ".obj")
+
+                    # export latent
+                    latent = sampled_array[j:j+1].detach().cpu()
+                    torch.save(
+                        {
+                            "latent": latent,
+                            "ae": args.ae,
+                            "dm": args.dm,
+                            "category_id": category_id,
+                        },
+                        out_base + "_latent.pt"
+                    )
