@@ -50,14 +50,20 @@ if __name__ == "__main__":
     xv, yv, zv = np.meshgrid(x, y, z)
     grid = torch.from_numpy(np.stack([xv, yv, zv]).astype(np.float32)).view(3, -1).transpose(0, 1)[None].to(device, non_blocking=True)
 
-    total = 1000
+    # total = 1000
+    total = 100
     iters = 100
+    # iters = 10
 
-
+    num_categories = 55  # 55 for all categories, 10 for a subset
+    num_samples_per_category = 5
+    
     with torch.no_grad():
-        for category_id in [18]:
+        # for category_id in [18]:
+        for category_id in range(num_categories):
             print(category_id)
-            for i in range(1000//iters):
+            # for i in range(1000//iters):
+            for i in range(total//iters):
                 sampled_array = model.sample(cond=torch.Tensor([category_id]*iters).long().to(device), batch_seeds=torch.arange(i*iters, (i+1)*iters).to(device)).float()
 
                 print(sampled_array.shape, sampled_array.max(), sampled_array.min(), sampled_array.mean(), sampled_array.std())
