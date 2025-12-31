@@ -84,7 +84,8 @@ if __name__ == "__main__":
                     # m = trimesh.Trimesh(verts, faces)
                     # m.export(f'{args.out_dir}/{args.dm}/{category_id:02d}-{i*iters+j:05d}.obj')
 
-                    out_base = f"{args.out_dir}/{args.dm}/{category_id:02d}-{i*iters+j:05d}"
+                    out_base = f"{args.out_dir}/{args.dm}/{category_id:02d}/{category_id:02d}-{i*iters+j:05d}"
+                    Path(f"{args.out_dir}/{args.dm}/{category_id:02d}").mkdir(parents=True, exist_ok=True)
                         
                     # export mesh
                     m = trimesh.Trimesh(verts, faces)
