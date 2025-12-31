@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument('--ae-pth', default='output/ae/kl_d512_m512_l8/checkpoint-199.pth', type=str, required=False) # 'output/ae/kl_d512_m512_l16/checkpoint-199.pth'
     parser.add_argument('--dm', default='kl_d512_m512_l8_d24_edm', type=str, required=False) # 'kl_d512_m512_l16_edm'
     parser.add_argument('--dm-pth', default='output/class_cond_dm/kl_d512_m512_l8_d24_edm/checkpoint-499.pth', type=str, required=False) # 'output/uncond_dm/kl_d512_m512_l16_edm/checkpoint-999.pth'
+    parser.add_argument('--out-dir', default='class_cond_obj', type=str, required=False)
     args = parser.parse_args()
     print(args)
 
@@ -72,10 +73,10 @@ if __name__ == "__main__":
                     verts -= 1
 
 
-                    m = trimesh.Trimesh(verts, faces)
-                    m.export('class_cond_obj/{}/{:02d}-{:05d}.obj'.format(args.dm, category_id, i*iters+j))
+                    # m = trimesh.Trimesh(verts, faces)
+                    # m.export(f'{args.out_dir}/{args.dm}/{category_id:02d}-{i*iters+j:05d}.obj')
 
-                    out_base = f"class_cond_obj/{args.dm}/{category_id:02d}-{i*iters+j:05d}"
+                    out_base = f"{args.out_dir}/{args.dm}/{category_id:02d}-{i*iters+j:05d}"
 
                     # export mesh
                     m = trimesh.Trimesh(verts, faces)
