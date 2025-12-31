@@ -50,8 +50,8 @@ if __name__ == "__main__":
     xv, yv, zv = np.meshgrid(x, y, z)
     grid = torch.from_numpy(np.stack([xv, yv, zv]).astype(np.float32)).view(3, -1).transpose(0, 1)[None].to(device, non_blocking=True)
 
-    # total = 1000
-    total = 100
+    total = 1000
+    # total = 100
     iters = 100
     # iters = 10
 
