@@ -51,9 +51,9 @@ if __name__ == "__main__":
     grid = torch.from_numpy(np.stack([xv, yv, zv]).astype(np.float32)).view(3, -1).transpose(0, 1)[None].to(device, non_blocking=True)
 
     # total = 1
-    total = 100
+    total = 50
     # iters = 1
-    iters = 100
+    iters = 50
 
     num_categories = 55 
     
